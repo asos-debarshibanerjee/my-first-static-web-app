@@ -16,7 +16,6 @@ function App() {
     console.log(selectedEntityType);
     console.log(entityIdsRef.current.value);
     const entityIdsEntry = entityIdsRef.current.value;
-    const entityIds = entityIdsEntry.split(",")
     const url = '/api/message?selectedEntityType=' + selectedEntityType + '&entityIds=[' + entityIdsEntry + ']';
     console.log(url)
     getDataHandler(url);
