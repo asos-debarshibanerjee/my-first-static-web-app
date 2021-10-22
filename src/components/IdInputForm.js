@@ -3,15 +3,10 @@ import React from 'react';
 import EntityTypeChoices from './EntityTypeChoices';
 
 const IdInputForm = (props) => {
-
   
   const entityChoiceName = "entityType"
-  const entityTypes = ["Products", "Options", "SKUs", "Colourways"];
+  const entityTypes = ["Products", "Options", "Colourways", "SKUs", "Variants", "LegacyStyles"];
   
- 
-
-  
-
   return (
 
     <form onSubmit={props.onSubmit} >
