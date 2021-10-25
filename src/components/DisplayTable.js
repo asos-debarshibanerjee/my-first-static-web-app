@@ -2,6 +2,18 @@ import React from 'react';
 import "./DisplayTable.css"
 
 const DisplayTable = (props) => {
+    const columnsInTable = [
+        {"header": "Product ID", "nameInMap": "productID"},
+        {"header": "Retail Style ID", "nameInMap": "styleId"},
+        {"header": "Legacy Style ID", "nameInMap": "legacyStyleID"},
+        {"header": "Colourway ID", "nameInMap": "colourwayID"},
+        {"header": "Retail Option ID", "nameInMap": "retailOptionID"},
+        {"header": "Variant ID", "nameInMap": "variantID"},
+        {"header": "Retail SKU ID", "nameInMap": "retailSKUID"},
+
+    ];
+
+   
 
     const dataTable = props.data;
     const columns = Object.keys(dataTable[0]);
@@ -10,12 +22,8 @@ const DisplayTable = (props) => {
             <thead>
                 <tr>
                     {
-                        columns.map(
-                            column =>
-                            (
-
-                                <th key={column}>{column}</th>
-                            )
+                        columnsInTable.map(
+                            column => <th key={column.header}>{column.header}</th>
                         )
                     }
                 </tr>
@@ -25,9 +33,9 @@ const DisplayTable = (props) => {
                     dataTable.map(
                         product => (
                             <tr key={product.retailSKUID}>
-                                {columns.map(
+                                {columnsInTable.map(
                                     column => (
-                                        <td key={product.retailSKUID + column}>{product[column]}</td>
+                                        <td key={product.retailSKUID + column}>{product[column.nameInMap]}</td>
                                     )
                                 )}
 

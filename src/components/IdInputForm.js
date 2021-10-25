@@ -1,30 +1,30 @@
 import React from 'react';
+import { Button, Form, FormGroup, Label, Input } from 'reactstrap'
 
 import EntityTypeChoices from './EntityTypeChoices';
 
 const IdInputForm = (props) => {
-  
+
   const entityChoiceName = "entityType"
   const entityTypes = ["Products", "Options", "Colourways", "SKUs", "Variants", "LegacyStyles"];
-  
+
   return (
 
-    <form onSubmit={props.onSubmit} >
-      <div className='form-control'>
+    <Form onSubmit={props.onSubmit} >
 
-        <EntityTypeChoices entityTypes={entityTypes} name={entityChoiceName} onChange={props.selectionChangeHandler}/>
 
-        <div>
-          <textarea id="entityIds" name="entityIds" rows="4" cols="100" ref={props.entityIdsRef}/>
-        </div>
+      <EntityTypeChoices entityTypes={entityTypes} name={entityChoiceName} onChange={props.selectionChangeHandler} />
 
-      </div>
+      <FormGroup>
+        <Label for="exampleText">Please enter the IDs</Label>
+        <Input type="textarea" name="entityIds" id="entityIds" innerRef={props.entityIdsRef} />
+      </FormGroup>
 
-      <div className="form-actions">
-        <button>Search</button>
-      </div>
 
-    </form>
+
+      <Button>Submit</Button>
+
+    </Form>
 
   );
 

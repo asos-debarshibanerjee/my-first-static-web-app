@@ -1,10 +1,10 @@
 import requests, os
 
 def getBaseUrl():
-    return "https://dev-product-management-api-tgr.test.digcoreint.com"
+    return "https://sit-product-management-api-tgr.test.digcoreint.com"
 
 def is_filtering_suppressed():
-    return "true"
+    return "false"
 
 def get_bearer_token():
     post_obj = {
@@ -13,6 +13,8 @@ def get_bearer_token():
         'client_secret': os.environ['AZURE_CLIENT_SECRET'],
         'resource': 'https://api.asos.com'
     }
+
+    
     token_endpoint = 'https://login.microsoftonline.com/4af8322c-80ee-4819-a9ce-863d5afbea1c/oauth2/token'
     res = requests.post(token_endpoint, post_obj)
     # print(res.json()['access_token'])

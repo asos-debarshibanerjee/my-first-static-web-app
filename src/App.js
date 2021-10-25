@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
 import DisplayTable from './components/DisplayTable';
 import Form from './components/IdInputForm';
+import { Jumbotron, Container, Row, Col, Spinner } from 'reactstrap';
 
 
 function App() {
 
   const [data, setData] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
   const [selectedEntityType, setSelectedEntityType] = useState("");
   const entityIdsRef = useRef();
 
@@ -16,15 +18,21 @@ function App() {
 
   const formSubmissionHandler = (event) => {
     event.preventDefault();
+    setData("");
     const entityIdsEntry = entityIdsRef.current.value;
+    console.log(entityIdsEntry)
     const url = '/api/message?selectedEntityType=' + selectedEntityType + '&entityIds=[' + entityIdsEntry + ']';
     getDataHandler(url);
   }
 
   const getDataHandler = async (url) => {
+    setIsLoading(true);
     const response = await fetch(url);
     const products = await response.json();
-    setData(transformProducts(products));
+    const dataForTable= transformProducts(products)
+    console.log(dataForTable)
+    setData(dataForTable);
+    setIsLoading(false);
   }
 
   const transformProducts = products => {
@@ -32,7 +40,7 @@ function App() {
       product => {
         return product.colourways.map(
           colourway => {
-            return colourway.variants.map(           
+            return colourway.variants.map(
               variant => {
                 return {
                   productID: product.productID,
@@ -52,15 +60,53 @@ function App() {
           }
         )
       }
-    );    
+    );
     return rows.flat(3);
   }
 
   return (
-    <React.Fragment>
-      <Form onSubmit={formSubmissionHandler} selectionChangeHandler={selectionChangeHandler} entityIdsRef={entityIdsRef} />
-      {(data) && <DisplayTable data={data}></DisplayTable>}
-    </React.Fragment>
+    <Container>
+
+      <Row>
+        <Col>
+          <Jumbotron>
+            <h1 className="display-3">Product Explorer</h1>
+            <p className="lead">Here you could search by different ids and get back results for the product associated with that id and the associated Commercial and Digital ids.</p>
+          </Jumbotron>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <Form onSubmit={formSubmissionHandler} selectionChangeHandler={selectionChangeHandler} entityIdsRef={entityIdsRef} />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col />
+      </Row>
+
+
+      {
+        isLoading &&
+        <Row>
+          <Col />
+          <Col> <Spinner color="primary" /></Col>
+          <Col />
+        </Row>
+      }
+
+      {
+        (data) &&
+        <Row>
+          <Col>
+            <DisplayTable data={data}></DisplayTable>
+          </Col>
+        </Row>
+      }
+
+
+    </Container>
   );
 
 }

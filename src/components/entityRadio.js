@@ -1,12 +1,15 @@
 import React from 'react';
+import { FormGroup, Label, Input } from 'reactstrap'
 
 const EntityRadio = (props) => {
 
     return (
-        <div>
-            <input type="radio" id={props.id} name={props.name} onChange={props.onChange} />
-            <label htmlFor={props.id}>{props.id}</label>
-        </div>
+            <FormGroup check>
+                <Label check>
+                    <Input type="radio" id={props.id} name={props.name} onChange={props.onChange} />{' '}
+                    {props.id}
+                </Label>
+            </FormGroup>
     );
 }
 
