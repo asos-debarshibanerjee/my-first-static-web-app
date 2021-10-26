@@ -24,17 +24,21 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     entityIds = getEntityIdsFromQueryParameter(entityIdsParam)
     print(entityIds)
     productManagementCallables = {
-        "Products": productmanagement.get_from_product_id , 
-        "Options": productmanagement.get_from_option_id, 
-        "Colourways": productmanagement.get_from_colourway_id, 
-        "SKUs": productmanagement.get_from_sku_id, 
-        "Variants": productmanagement.get_from_variant_id, 
+        "Products": productmanagement.get_from_product_id,
+        "Options": productmanagement.get_from_option_id,
+        "Colourways": productmanagement.get_from_colourway_id,
+        "SKUs": productmanagement.get_from_sku_id,
+        "Variants": productmanagement.get_from_variant_id,
         "LegacyStyles": productmanagement.get_from_legacy_style_id
     }
 
     responses = map(productManagementCallables[selectedEntityType], entityIds)
     products = list(map(lambda response: response.json(), responses))
-    print(json.dumps(products))
+    uniqueProducts = []
 
-    
-    return func.HttpResponse(json.dumps(products))
+
+    [uniqueProducts.append(product)
+    for product in products if product not in uniqueProducts]
+    print(json.dumps(uniqueProducts))
+
+    return func.HttpResponse(json.dumps(uniqueProducts))

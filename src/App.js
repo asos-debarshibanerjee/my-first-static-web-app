@@ -1,12 +1,16 @@
 import React, { useState, useRef } from 'react';
-import DisplayTable from './components/DisplayTable';
-import Form from './components/IdInputForm';
 import { Jumbotron, Container, Row, Col, Spinner } from 'reactstrap';
+import ProductsTable from './components/ProductsTable';
+import Form from './components/IdInputForm';
+import ProductsNotFoundTable from './components/ProductsNotFoundTable';
+import transformResponse from './utilities/transformResponse';
+import filterFoundProducts from './utilities/filterFoundProducts';
 
 
 function App() {
 
-  const [data, setData] = useState("");
+  const [productsFound, setProductsFound] = useState([]);
+  const [productsNotFound, setProductsNotFound] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
   const [selectedEntityType, setSelectedEntityType] = useState("");
   const entityIdsRef = useRef();
@@ -17,51 +21,31 @@ function App() {
   }
 
   const formSubmissionHandler = (event) => {
+
     event.preventDefault();
-    setData("");
-    const entityIdsEntry = entityIdsRef.current.value;
-    console.log(entityIdsEntry)
-    const url = '/api/message?selectedEntityType=' + selectedEntityType + '&entityIds=[' + entityIdsEntry + ']';
-    getDataHandler(url);
-  }
-
-  const getDataHandler = async (url) => {
+    setProductsFound([]);
+    setProductsNotFound([]);
     setIsLoading(true);
-    const response = await fetch(url);
-    const products = await response.json();
-    const dataForTable= transformProducts(products)
-    console.log(dataForTable)
-    setData(dataForTable);
-    setIsLoading(false);
+    const entityIdsEntry = entityIdsRef.current.value;
+    const url = '/api/message?selectedEntityType=' + selectedEntityType + '&entityIds=[' + entityIdsEntry + ']';
+    getData(url)
+      .then(response => {
+        console.log(response);
+        const fetchedResults = transformResponse(response);
+        console.log(fetchedResults);
+        const filteredResults = filterFoundProducts(fetchedResults.productsFound, entityIdsEntry.split(","), selectedEntityType);
+        console.log(filteredResults);
+        setProductsFound(filteredResults);
+        setProductsNotFound(fetchedResults.productsNotFound);
+        setIsLoading(false);
+      });
+
   }
 
-  const transformProducts = products => {
-    const rows = products.map(
-      product => {
-        return product.colourways.map(
-          colourway => {
-            return colourway.variants.map(
-              variant => {
-                return {
-                  productID: product.productID,
-                  productCode: product.productCode,
-                  productLastUpdatedDateTime: product.productLastUpdatedDateTime,
-                  productStatus: product.productStatus,
-                  publishStatus: product.publishStatus,
-                  styleId: product.styleId,
-                  legacyStyleID: product.legacyStyleID,
-                  colourwayID: colourway.colourwayID,
-                  retailOptionID: colourway.retailOptionID,
-                  retailSKUID: variant.retailSKUID,
-                  variantID: variant.variantID
-                }
-              }
-            )
-          }
-        )
-      }
-    );
-    return rows.flat(3);
+  const getData = async (url) => {
+    const rawResponse = await fetch(url);
+    const response = await rawResponse.json();
+    return response;
   }
 
   return (
@@ -82,10 +66,6 @@ function App() {
         </Col>
       </Row>
 
-      <Row>
-        <Col />
-      </Row>
-
 
       {
         isLoading &&
@@ -97,13 +77,22 @@ function App() {
       }
 
       {
-        (data) &&
+        (productsFound.length > 0) &&
         <Row>
           <Col>
-            <DisplayTable data={data}></DisplayTable>
+            <ProductsTable data={productsFound}></ProductsTable>
           </Col>
         </Row>
       }
+      {
+        (productsNotFound.length > 0) &&
+        <Row>
+          <Col>
+            <ProductsNotFoundTable data={productsNotFound}></ProductsNotFoundTable>
+          </Col>
+        </Row>
+      }
+
 
 
     </Container>
