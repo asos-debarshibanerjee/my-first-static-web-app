@@ -25,7 +25,7 @@ const mapProduct = product => {
                         productLastUpdatedDateTime: product.productLastUpdatedDateTime,
                         productStatus: product.productStatus,
                         publishStatus: product.publishStatus,
-                        styleId: product.styleId,
+                        styleId: product.hasOwnProperty('styleId') ? product.styleId : product.retailStyleID,
                         legacyStyleID: product.legacyStyleID,
                         colourwayID: colourway.colourwayID,
                         retailOptionID: colourway.retailOptionID,
